@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cp -r ./src/*/*.java .
+
+for i in *.java; do
+	sed -i -e "s/\(package.*;\)/\/\/ \1/g" $i
+	sed -i -e "s/\(import process.*;\)/\/\/ \1/g" $i
+	sed -i -e "s/\(import main.*;\)/\/\/ \1/g" $i
+	sed -i -e "s/\(import scheduler.*;\)/\/\/ \1/g" $i
+done
+

@@ -1,0 +1,74 @@
+---------------------------------------------------------------------------
+                             TEMA 1 - POO
+---------------------------------------------------------------------------
+
+Autor:
+  Smadu Razvan-Alexandru  325CB
+
+Fisiere incluse:
+  - ./bin/*    - contine fisierele compilate .class
+  - ./doc/*    - contine javadoc
+  - ./src/*    - contine fisierele sursa puse in pachete
+  - build      - copiaza fisierele din ./src/*/ si comenteaza liniile cu 
+                 package si import din package
+  - Makefile   - compileaza fisierele, ruleaza programul si sterge fisiere 
+                 temorale
+  - README     - acest fisier
+
+README
+ Nota de testare: Nu este obligatorie rularea scriptului build intrucat 
+                  acest lucru este facut la rularea make sau make build
+
+ Implementarea temei
+  Citirea datelor din fisiere este realizata de catre fisierele data ca
+  schelet. In fisierul ProblemData.java am adaugat metoda createOutput()
+  care prelucreaza datele citite din fisier si ruleaza procesele, 
+  returnand in final un vector de output-uri. Pentru fiecare proces 
+  exista o clasa care extinde tipul de proces generic (care nu face nimic,
+  fiind practic implementata ca o clasa abstracta). Aceste clase suprascriu
+  metoda run care realizeaza calculul efectiv al inputului si metoda toString
+  care returneaza numele clasei ca string. Clasa proces contine input-ul,
+  output-ul (ambele ca Integer, pentru a putea face comparatii cu null) si o
+  cota, pentru WeightedScheduler. Pentru a accesa acesti membri ai clasei, 
+  trebuie utilizati getter-ii si setter-ii asociati. 
+  
+  Planificatorul generic de procese este reprezentat de clasa abstracta 
+  ProcessScheduler care contine un vector de procese, un vector de input-uri,
+  un vector de output-uri, memoria cache si indexul input-ului la care s-a
+  ajuns cu rularea. Se adauga procese in planificator utilizand metoda 
+  addProcess(), se seteaza vectorul de input-uri si se ruleaza planificatorul
+  apeland metoda runScheduler(). Aceasta, in functie de tipul planificatorului
+  implementat, ruleaza un anume proces pentru fiecare input. Metoda de rulare
+  a proceselor este runProcessAtID(), prin ID (sau PID) intelegandu-se indicele
+  procesului in vectorul de procese. Aceasta metoda ruleaza procesul daca 
+  niciun mecanism de caching nu este implementat sau preia valoare din cache
+  in cazul opus. Apoi se pun datele despre proces si output in vectorul de 
+  output-uri de tip OutputClass, clasa prin care se pastreaza datele necesare 
+  pentru afisarea in fisier. 
+
+  Pentru RandomScheduler, PID-ul este generat random si apoi se ruleaza 
+  procesul asociat; pentru RoundRobinScheduler se ruleaza procesele in
+  ordine, PID-ul fiind calculat ca fiind indexul input-ului curent modulo
+  numarul de procese; iar pentru WeightedScheduler se retin cotele intr-un
+  vector si se scad pana cand se ajunge la 0, de unde se reinitializeaza
+  va valorile initiale. Pentru ultimul planificator, PID-urile sunt alese
+  aleator din PID-urile disponibile (care au "cota" curenta diferita de 0)
+
+  Pentru mecanismul de caching, clasa Cache implementeaza metode precum 
+  runProcessUsingCache() prin care se verifica daca un proces a mai rulat
+  pe acel input sau in ruleaza si pune valoarea in cache. Cache-ul este 
+  reprezentat de un vector de elemente de tip ProcessCached, clasa care
+  este interna. Aceasta clasa contine date precum input-ul, output-ul, 
+  tipul procesului, frecveta in cache sau timpul in care a fost apelat 
+  procesul. Acest timp este masurat ca numarul de apeluri de ale unui proces
+  de la inceputul executiei. Pentru NoCaching, nu se retine nicio valoare
+  si se executa procesele normal. Pentru LFUCache se verifica frecventele 
+  proceselor in cache si se modifica procesul care are cea mai mica 
+  valoare in campul frecventa. In caz de egalitate se modifica procesul
+  cel mai vechi (cu timpul cel mai mic de incepere al executiei). La 
+  LRUCache se inlocuieste procesul cu cel mai mic timp de incepere al
+  executiei. 
+
+  In final, dupa rularea tuturor proceselor, valorile din output sunt 
+  afisate in fisier folosind scheletul dat.
+
